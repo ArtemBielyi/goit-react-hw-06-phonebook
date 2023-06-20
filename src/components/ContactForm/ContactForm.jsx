@@ -1,49 +1,52 @@
 import { useState } from 'react';
-import { PropTypes } from 'prop-types';
-import css from 'components/ContactForm/ContactForm.module.css';
+import { nanoid } from 'nanoid';
+import { useDispatch, useSelector } from 'react-redux';
+import { contactsCheking } from 'utils/contactsCheking';
+import { addContact } from 'redux/contactsSlice';
+import { getContacts } from 'redux/selectors';
+import css from '../ContactForm/ContactForm.module.css';
 
-export const Form = ({ addContact, checkDuplicateContacts }) => {
+export const ContactForm = () => {
+  const dispatch = useDispatch();
+  const contacts = useSelector(getContacts);
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
-  const handleChange = e => {
-    switch (e.target.name) {
-      case 'name':
-        setName(e.target.value);
-        break;
-      case 'number':
-        setNumber(e.target.value);
-        break;
-      default:
-        return;
-    }
-  };
-
-  const handleSubmit = e => {
+  const handleCreateNewContact = e => {
     e.preventDefault();
+    const newContact = {
+      name,
+      number,
+      id: nanoid(),
+    };
+    const inContactList = contacts.filter(contact =>
+      contactsCheking(contact, newContact)
+    ).length;
 
-    if (checkDuplicateContacts(e)) {
-      alert(`${name} already in contacts`);
-      return;
+    if (!inContactList) {
+      dispatch(addContact(newContact));
     }
-    addContact(name, number);
-    reset();
-  };
-
-  const reset = () => {
     setName('');
     setNumber('');
   };
 
+  const handleNameChange = e => {
+    setName(e.target.value);
+  };
+
+  const handleNumberChange = e => {
+    setNumber(e.target.value);
+  };
+
   return (
-    <form onSubmit={handleSubmit} className={css.form}>
+    <form onSubmit={handleCreateNewContact} className={css.form}>
       <label className={css.label}>
         Name
         <input
           type="text"
           className={css.input}
           value={name}
-          onChange={handleChange}
+          onChange={handleNameChange}
           name="name"
           pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
           title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
@@ -57,7 +60,7 @@ export const Form = ({ addContact, checkDuplicateContacts }) => {
           type="tel"
           className={css.input}
           value={number}
-          onChange={handleChange}
+          onChange={handleNumberChange}
           name="number"
           pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
@@ -70,10 +73,4 @@ export const Form = ({ addContact, checkDuplicateContacts }) => {
       </button>
     </form>
   );
-};
-
-export default Form;
-
-Form.propTypes = {
-  addContact: PropTypes.func.isRequired,
 };

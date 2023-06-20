@@ -1,20 +1,23 @@
-.input {
-  display: block;
-  width: 100%;
-  padding: 6px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin-bottom: 10px;
-  box-sizing: border-box;
+.filter_title {
+  margin-bottom: 15px;
+
+  font-size: 18px;
 }
 
-.label {
-  display: block;
-  margin-bottom: 10px;
-  font-weight: bold;
+.filter_input {
+  width: 250px;
+  height: 35px;
+  margin-bottom: 15px;
+  padding: 5px 10px;
+
+  background-color: #b6baff14;
+  text-transform: none;
+  font-size: 20px;
+  border-radius: 5px;
+  border: 1px solid #d3d5ff40;
 }
 
-.filterContainer {
-  margin-bottom: 20px;
+.filter_input:focus {
+  background-color: #d3d5ff40;
+  outline: none;
 }
